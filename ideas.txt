@@ -1,0 +1,13 @@
+NodeJS Server:
+- Specify auth type
+- Specify port
+- TypeScript yes or no
+
+C Project:
+- create header and c file
+
+Python Module
+
+Command aliases
+
+Git init

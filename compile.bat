@@ -1,0 +1,1 @@
+gcc ./src/*.c -Wall -o cli
