@@ -6,6 +6,7 @@
 typedef enum
 {
     NODE,
+    GIT,
 } CLIArgumentType;
 
 typedef struct
