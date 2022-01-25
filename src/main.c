@@ -1,5 +1,6 @@
 #include "cli.h"
 #include "input.h"
+#include "filesystem.h"
 #include <stdio.h>
 #include <stdbool.h>
 #include <stdlib.h>
@@ -22,6 +23,11 @@ void execute_args()
     }
 
     if (cli_get_arg(NODE) != NULL) {
+        int port;
+        while (!port) {
+            port = input_number("Enter a server port");
+        }
+       
        if (input_choice("Would you like authentication in your application", NO) == YES) {
            char* auth_options[] = { "JSON Web Token" };
            int auth_choice = input_multiple_choice("Please choose an authentication type", auth_options, sizeof(auth_options) / sizeof(char*));
@@ -32,6 +38,11 @@ void execute_args()
 
        system("npm init -y");
        system("npm i express");
+
+        directory_create("./src");
+        directory_create("./routes");
+        file_create("./src/index.js");
+        file_write("./src/index.js", "const express = require(\"express\");\nconst app = express();\n\napp.use(express.json());\n");
     }
 }
 

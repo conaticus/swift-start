@@ -24,6 +24,16 @@ int input_multiple_choice(char* message, char* options[], int options_length)
     return choice;
 }
 
+int input_number(char* message)
+{
+    printf("%s: ", message);
+
+    int input;
+    scanf("%d", &input);
+
+    return input;
+}
+
 YesOrNo input_choice(char* message, YesOrNo default_choice)
 {
     if (default_choice == YES) {
