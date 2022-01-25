@@ -18,7 +18,7 @@ void execute_args()
     // Change later to support upstream
     if (git_arg != NULL) {
         system("git init");
-        system(strcat("git remote add origin", git_arg));
+        system(strcat("git remote add origin", git_arg->value));
     }
 
     if (cli_get_arg(NODE) != NULL) {

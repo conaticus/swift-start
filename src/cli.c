@@ -34,7 +34,7 @@ void cli_arg_template_add(char* short_hand, char* long_hand, bool has_value, CLI
     arg_template->has_value = has_value;
     arg_template->type = type;
 
-    realloc(cli_args_template, sizeof(CLIArgumentTemplate) * ++args_template_len);
+    cli_args_template = realloc(cli_args_template, sizeof(CLIArgumentTemplate) * ++args_template_len);
     cli_args_template[args_template_len - 1] = *arg_template;
 }
 
@@ -81,7 +81,7 @@ bool cli_args_parse()
             return false;
         }
 
-        realloc(cli_args, sizeof(CLIArgument) * ++args_len);
+        cli_args = realloc(cli_args, sizeof(CLIArgument) * ++args_len);
         cli_args[args_len - 1] = *argument;
 
         arg_index++;     
