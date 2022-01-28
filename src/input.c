@@ -1,6 +1,7 @@
 #include "input.h"
 #include "util.h"
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 int input_multiple_choice(char* message, char* options[], int options_length)
@@ -30,6 +31,24 @@ int input_number(char* message)
 
     int input;
     scanf("%d", &input);
+
+    return input;
+}
+
+char* input_string(char* message)
+{
+    printf("%s: ", message);
+
+    char* input = malloc(sizeof *input);
+    if (!input) {
+        error_malloc_failed();
+    }
+
+    scanf("%s", input);
+    input = realloc(input, sizeof(char) * strlen(input));
+    if (!input) {
+        error_malloc_failed();
+    }
 
     return input;
 }

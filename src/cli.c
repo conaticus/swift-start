@@ -1,4 +1,5 @@
 #include "cli.h"
+#include "util.h"
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
@@ -18,8 +19,15 @@ void cli_init(int arg_count, char** arg_vec)
     argc = arg_count;
     argv = arg_vec;
 
-    cli_args_template = (CLIArgumentTemplate*)malloc(sizeof(CLIArgumentTemplate));
-    cli_args = (CLIArgument*)malloc(sizeof(CLIArgument));
+    cli_args_template = malloc(sizeof *cli_args_template);
+    if (!cli_args_template) {
+        error_malloc_failed();
+    }
+
+    cli_args = malloc(sizeof *cli_args);
+    if (!cli_args) {
+        error_malloc_failed();
+    }
 
     // Remove directory argument
     argv++;
@@ -28,14 +36,18 @@ void cli_init(int arg_count, char** arg_vec)
 
 void cli_arg_template_add(char* short_hand, char* long_hand, bool has_value, CLIArgumentType type)
 {
-    CLIArgumentTemplate* arg_template = (CLIArgumentTemplate*)malloc(sizeof(CLIArgumentTemplate));
+    void *new_mem = realloc(cli_args_template, sizeof *cli_args_template * (args_template_len + 1));
+    if (!new_mem) {
+        error_malloc_failed();
+    }
+
+    cli_args_template = new_mem;
+
+    CLIArgumentTemplate* arg_template = cli_args_template + args_template_len++;
     arg_template->short_hand = short_hand;
     arg_template->long_hand = long_hand;
     arg_template->has_value = has_value;
     arg_template->type = type;
-
-    cli_args_template = realloc(cli_args_template, sizeof(CLIArgumentTemplate) * ++args_template_len);
-    cli_args_template[args_template_len - 1] = *arg_template;
 }
 
 bool cli_args_parse()
@@ -60,7 +72,11 @@ bool cli_args_parse()
             char* argument_stripped = current_argument;
             if (strcmp(++argument_stripped, template.short_hand) != 0 && strcmp(++argument_stripped, template.long_hand) != 0) continue;
 
-            argument = (CLIArgument*)malloc(sizeof(CLIArgument));
+            argument = malloc(sizeof *argument);
+            if (!argument) {
+                error_malloc_failed();
+            }
+
             argument->type = template.type;
             
             if (template.has_value) {
@@ -76,14 +92,18 @@ bool cli_args_parse()
             break;
         }
 
-        if (argument == NULL) {
+        if (!argument) {
             printf("[PARSING ERROR]: Unrecognised argument '%s'.", current_argument);
             return false;
         }
 
-        cli_args = realloc(cli_args, sizeof(CLIArgument) * ++args_len);
-        cli_args[args_len - 1] = *argument;
+        cli_args = realloc(cli_args, sizeof *cli_args * (args_len + 1));
+        if (!cli_args) {
+            error_malloc_failed();
+        }
 
+        args_len++;
+        cli_args[args_len - 1] = *argument;
         arg_index++;     
     }
 

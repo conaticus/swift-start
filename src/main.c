@@ -1,6 +1,7 @@
 #include "cli.h"
 #include "input.h"
 #include "filesystem.h"
+#include "util.h"
 #include <stdio.h>
 #include <stdbool.h>
 #include <stdlib.h>
@@ -10,6 +11,7 @@ void arg_template_init()
 {
     cli_arg_template_add("n", "node", false, NODE);
     cli_arg_template_add("g", "git", true, GIT);
+    cli_arg_template_add("c", "c-file", false, C_FILE);
 }
 
 void execute_args()
@@ -20,6 +22,38 @@ void execute_args()
     if (git_arg != NULL) {
         system("git init");
         system(strcat("git remote add origin", git_arg->value));
+    }
+
+    if (cli_get_arg(C_FILE) != NULL) {
+        char* file_name = input_string("Enter name");
+        
+        char header_name[sizeof file_name];
+        strcpy(header_name, file_name);
+        strcat(header_name, ".h");
+
+        char src_name[sizeof file_name];
+        strcpy(src_name, file_name);
+        strcat(src_name, ".c");
+
+        file_create(header_name);
+        file_create(src_name);
+
+        char header_guard_def[sizeof file_name];
+        strcpy(header_guard_def, file_name); 
+
+        str_replace(header_guard_def, ' ', '_');
+        to_upper_case(header_guard_def);
+        strcat(header_guard_def, "_H");
+
+        char header_src[36];
+        sprintf(header_src, "#ifndef %s\n#define %s\n\n#endif // %s", header_guard_def, header_guard_def, header_guard_def);
+
+        file_write(header_name, header_src);
+
+        char src_file_src[16];
+        sprintf(src_file_src, "#include \"%s.h\"", file_name);
+
+        file_write(src_name, src_file_src);
     }
 
     if (cli_get_arg(NODE) != NULL) {
@@ -43,6 +77,8 @@ void execute_args()
         directory_create("./routes");
         file_create("./src/index.js");
         file_write("./src/index.js", "const express = require(\"express\");\nconst app = express();\n\napp.use(express.json());\n");
+
+        return;
     }
 }
 
