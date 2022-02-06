@@ -39,12 +39,13 @@ char* input_string(char* message)
 {
     printf("%s: ", message);
 
-    char* input = malloc(sizeof *input);
+    char* input = malloc(500 * sizeof(char));
     if (!input) {
         error_malloc_failed();
     }
 
-    scanf("%s", input);
+    scanf("%[^\n]s", input);
+    
     input = realloc(input, sizeof(char) * strlen(input));
     if (!input) {
         error_malloc_failed();
@@ -61,16 +62,21 @@ YesOrNo input_choice(char* message, YesOrNo default_choice)
         printf("%s (y\\N): ", message);
     }
 
-    char choice[3];
-    gets(choice);
+    char* choice = malloc(3 * sizeof(char));
+    if (!choice) {
+        error_malloc_failed();
+    }
 
+    scanf("%[^\n]", choice);
     to_lower_case(choice);
 
     if (strcmp(choice, "y") == 0 || strcmp(choice, "yes") == 0) {
         return YES;
     } else if (strcmp(choice, "n") == 0 || strcmp(choice, "no") == 0) {
         return NO;
+    } else if (strcmp(choice, "\n")) {
+        return default_choice;
     }
 
-    return default_choice;
+    return input_choice(message, default_choice);
 }

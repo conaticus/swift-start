@@ -12,7 +12,7 @@ void file_create(char* path)
 void file_write(char* path, char* data)
 {
     FILE *file_ptr = fopen(path, "w");
-    fprintf(file_ptr, data);
+    fprintf(file_ptr, "%s", data);
     fclose(file_ptr);
 }
 

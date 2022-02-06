@@ -93,7 +93,7 @@ bool cli_args_parse()
         }
 
         if (!argument) {
-            printf("[PARSING ERROR]: Unrecognised argument '%s'.", current_argument);
+            printf("[PARSING ERROR]: Unrecognised argument '%s'.\n", current_argument);
             return false;
         }
 
